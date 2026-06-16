@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ergebnisse – Wahrscheinlichkeiten Selbsttest</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,sans-serif;background:linear-gradient(135deg,#e8eaf6 0%,#f3e5f5 100%);min-height:100vh;color:#333;padding:20px;line-height:1.6}
+.nav-top{text-align:right;margin-bottom:10px}
+.nav-top a{color:#7c4dff;text-decoration:none;font-size:14px;font-weight:600}
+.nav-top a:hover{text-decoration:underline}
+.container{max-width:960px;margin:0 auto}
+h1{text-align:center;color:#311b92;font-size:28px;margin-bottom:4px}
+.subtitle{text-align:center;color:#7c4dff;font-size:16px;margin-bottom:24px;font-weight:500}
+.card{background:#fff;border-radius:16px;box-shadow:0 4px 24px rgba(0,0,0,.08);padding:24px;margin-bottom:20px}
+.card h2{font-size:20px;color:#311b92;margin-bottom:16px;border-bottom:3px solid #7c4dff;padding-bottom:8px;display:inline-block}
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-weight:600;margin-bottom:4px;color:#555;font-size:14px}
+.form-group select,.form-group input[type="password"],.form-group input[type="text"]{width:100%;padding:12px 16px;border:2px solid #ddd;border-radius:10px;font-size:16px;transition:border-color .2s}
+.form-group select:focus,.form-group input:focus{outline:none;border-color:#7c4dff}
+.form-row{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-end}
+.form-row .form-group{flex:1;min-width:180px}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:12px 24px;border:none;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;transition:all .2s;text-decoration:none}
+.btn-primary{background:#7c4dff;color:#fff}
+.btn-primary:hover{background:#651fff;transform:translateY(-1px);box-shadow:0 4px 12px rgba(124,77,255,.35)}
+.btn-secondary{background:#ede7f6;color:#7c4dff}
+.btn-secondary:hover{background:#d1c4e9}
+.btn-success{background:#2e7d32;color:#fff}
+.btn-success:hover{background:#1b5e20;transform:translateY(-1px);box-shadow:0 4px 12px rgba(46,125,50,.3)}
+.btn-danger{background:#c62828;color:#fff}
+.btn-danger:hover{background:#b71c1c}
+.btn-outline{background:transparent;border:2px solid #7c4dff;color:#7c4dff}
+.btn-outline:hover{background:#f3e5f5}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none!important}
+.btn-small{padding:8px 16px;font-size:13px;border-radius:8px}
+.btn-wrap{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;align-items:center}
+.msg{display:none;padding:12px 16px;border-radius:10px;margin-bottom:16px;font-weight:500}
+.msg.error{display:block;background:#ffebee;color:#c62828;border:1px solid #ef9a9a}
+.msg.success{display:block;background:#e8f5e9;color:#2e7d32;border:1px solid #a5d6a7}
+.msg.info{display:block;background:#e3f2fd;color:#1565c0;border:1px solid #90caf9}
+.hidden{display:none}
+.results-table-wrap{overflow-x:auto;margin-top:12px}
+.results-table{width:100%;border-collapse:collapse;font-size:14px}
+.results-table th,.results-table td{padding:10px 12px;text-align:left;border-bottom:1px solid #eee}
+.results-table th{background:#ede7f6;color:#311b92;font-weight:600;font-size:13px;position:sticky;top:0}
+.results-table tr:hover td{background:#f5f5f5}
+.results-table .empty{text-align:center;color:#999;padding:40px;font-size:15px}
+.password-wrap{text-align:center;padding:10px 0}
+.password-wrap .form-group{max-width:400px;margin:0 auto}
+.password-wrap .btn{margin-top:8px}
+.stat-box{display:inline-flex;gap:24px;flex-wrap:wrap;margin-bottom:12px;padding:12px 16px;background:#fafafa;border-radius:12px;width:100%}
+.stat-item{font-size:14px}
+.stat-item strong{color:#311b92;font-size:18px}
+@media(max-width:600px){.container{padding:0}.form-row{flex-direction:column}.form-row .form-group{min-width:unset}.btn-wrap{flex-direction:column;align-items:stretch}.btn{justify-content:center}.stat-box{flex-direction:column;gap:8px}}
+</style>
+</head>
+<body>
+<div class="nav-top"><a href="index.html">&#x2190; Startseite</a></div>
+<div class="container">
+<h1>&#x1F4CA; Ergebnisauswertung</h1>
+<p class="subtitle">Selbsttest Wahrscheinlichkeiten &middot; Klasse 7</p>
+
+<div id="msgBox" class="msg"></div>
+
+<div id="loginCard" class="card">
+  <h2>&#x1F512; Passwort eingeben</h2>
+  <div class="password-wrap">
+    <div class="form-group">
+      <label for="password">Passwort</label>
+      <input type="password" id="password" placeholder="Passwort eingeben" autocomplete="off">
+    </div>
+    <button class="btn btn-primary" onclick="login()">Best&auml;tigen</button>
+  </div>
+</div>
+
+<div id="resultsCard" class="card hidden">
+  <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:12px">
+    <h2 style="margin-bottom:0">&#x1F4CB; Alle Ergebnisse</h2>
+    <div class="form-group" style="margin-bottom:0;min-width:120px">
+      <select id="filterKurs" onchange="applyFilter()">
+        <option value="">Alle Kurse</option>
+        <option value="7d">7d</option>
+        <option value="7f">7f</option>
+      </select>
+    </div>
+  </div>
+
+  <div id="statsArea"></div>
+
+  <div class="results-table-wrap">
+    <table class="results-table" id="resultsTable">
+      <thead><tr><th>Name</th><th>Kurs</th><th>Datum</th><th>Punkte</th><th>Prozent</th></tr></thead>
+      <tbody id="resultsBody"></tbody>
+    </table>
+  </div>
+
+  <div class="btn-wrap">
+    <button class="btn btn-success" onclick="exportCSV()">CSV exportieren</button>
+    <button class="btn btn-primary" onclick="exportPDF()">PDF exportieren</button>
+    <button class="btn btn-danger" onclick="confirmDeleteAll()">Alle l&ouml;schen</button>
+    <button class="btn btn-secondary" onclick="refreshData()" id="refreshBtn">Aktualisieren</button>
+    <span id="loadInfo" style="font-size:13px;color:#999"></span>
+  </div>
+</div>
+</div>
+
+<script>
+// ========== KaTeX Hilfsfunktion ==========
+function m(latex) {
+  try { return katex.renderToString(latex, {throwOnError:false,displayMode:false}); }
+  catch(e) { return latex; }
+}
+
+// ========== Firebase (ERSETZE_MICH) ==========
+const firebaseConfig = {
+  apiKey: "AIzaSyCk8ibjzzZUH4WT1lS2Osp98_nlUeirKqA",
+  authDomain: "wahrscheinlichkeiten-83d54.firebaseapp.com",
+  projectId: "wahrscheinlichkeiten-83d54",
+  storageBucket: "wahrscheinlichkeiten-83d54.firebasestorage.app",
+  messagingSenderId: "576052277361",
+  appId: "1:576052277361:web:cb6fc1ee888488a96a2bd0"
+};
+firebase.initializeApp(firebaseConfig);
+const dbFire = firebase.firestore();
+
+// ========== Zustand ==========
+const PASSWORT = "Ergebnisse 2026";
+let allResults = [];       // alle geladenen Daten
+let filteredResults = [];  // gefiltert nach Kurs
+let isLoggedIn = false;
+
+// ========== Login ==========
+function login() {
+  const pw = document.getElementById('password').value;
+  const msg = document.getElementById('msgBox');
+  msg.className = 'msg';
+  msg.style.display = 'none';
+  if (pw !== PASSWORT) {
+    msg.textContent = '&#x2716; Falsches Passwort.';
+    msg.className = 'msg error';
+    msg.style.display = 'block';
+    return;
+  }
+  isLoggedIn = true;
+  document.getElementById('loginCard').classList.add('hidden');
+  document.getElementById('resultsCard').classList.remove('hidden');
+  loadData();
+}
+
+document.getElementById('password').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') login();
+});
+
+// ========== Daten laden ==========
+async function loadData() {
+  const msg = document.getElementById('msgBox');
+  msg.className = 'msg';
+  msg.style.display = 'none';
+  document.getElementById('loadInfo').textContent = 'Lade Daten...';
+  document.getElementById('refreshBtn').disabled = true;
+
+  try {
+    const snapshot = await dbFire.collection("ergebnisse").get();
+
+    // Auto-delete entries older than 1 year
+    const now = new Date();
+    const deletePromises = [];
+
+    allResults = [];
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      const expireAt = data.expireAt ? (data.expireAt.toDate ? data.expireAt.toDate() : new Date(data.expireAt)) : null;
+
+      // If entry has expired, mark for deletion
+      if (expireAt && expireAt <= now) {
+        deletePromises.push(doc.ref.delete());
+        return;
+      }
+
+      allResults.push({
+        id: doc.id,
+        name: data.name || 'Unbekannt',
+        kurs: data.kurs || '-',
+        datum: data.datum || '',
+        punktzahl: data.punktzahl ?? 0,
+        prozent: data.prozent ?? 0
+      });
+    });
+
+    // Delete expired entries in background
+    if (deletePromises.length > 0) {
+      Promise.all(deletePromises).then(() => {
+        console.log('Gelöschte abgelaufene Einträge: '+deletePromises.length);
+      });
+    }
+
+    // Sort by date (newest first)
+    allResults.sort((a, b) => {
+      if (!a.datum && !b.datum) return 0;
+      if (!a.datum) return 1;
+      if (!b.datum) return -1;
+      // Try to parse dates for comparison
+      try {
+        const da = new Date(a.datum.replace(/(\d{2})\.(\d{2})\.(\d{4})/, '$3-$2-$1').replace(/,.*/, ''));
+        const db = new Date(b.datum.replace(/(\d{2})\.(\d{2})\.(\d{4})/, '$3-$2-$1').replace(/,.*/, ''));
+        return db - da;
+      } catch(e) { return 0; }
+    });
+
+    document.getElementById('loadInfo').textContent = allResults.length+' Einträge geladen'+(deletePromises.length > 0 ? ' ('+deletePromises.length+' abgelaufen entfernt)' : '')+'.';
+    applyFilter();
+
+  } catch(err) {
+    console.error('Fehler beim Laden:', err);
+    msg.textContent = '&#x2716; Fehler beim Laden der Daten: ' + err.message;
+    msg.className = 'msg error';
+    msg.style.display = 'block';
+    document.getElementById('loadInfo').textContent = 'Fehler beim Laden.';
+  } finally {
+    document.getElementById('refreshBtn').disabled = false;
+  }
+}
+
+// ========== Filtern & Tabelle rendern ==========
+function applyFilter() {
+  const kursFilter = document.getElementById('filterKurs').value;
+  filteredResults = kursFilter ? allResults.filter(r => r.kurs === kursFilter) : allResults;
+
+  renderStats();
+  renderTable();
+}
+
+function renderStats() {
+  const area = document.getElementById('statsArea');
+  if (filteredResults.length === 0) {
+    area.innerHTML = '';
+    return;
+  }
+  const avgProzent = Math.round(filteredResults.reduce((s,r) => s + r.prozent, 0) / filteredResults.length);
+  const best = Math.max(...filteredResults.map(r => r.prozent));
+  const worst = Math.min(...filteredResults.map(r => r.prozent));
+  area.innerHTML = `<div class="stat-box">
+    <div class="stat-item">&#x1F4CA; Eintr&auml;ge: <strong>${filteredResults.length}</strong></div>
+    <div class="stat-item">&#x1F3AF; Durchschnitt: <strong>${avgProzent}%</strong></div>
+    <div class="stat-item">&#x1F31F; Beste: <strong>${best}%</strong></div>
+    <div class="stat-item">&#x1F4A5; Schlechteste: <strong>${worst}%</strong></div>
+  </div>`;
+}
+
+function renderTable() {
+  const tbody = document.getElementById('resultsBody');
+  if (filteredResults.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5" class="empty">Keine Eintr&auml;ge gefunden.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = filteredResults.map(r => `<tr>
+    <td>${escHtml(r.name)}</td>
+    <td>${escHtml(r.kurs)}</td>
+    <td>${escHtml(r.datum)}</td>
+    <td>${r.punktzahl}</td>
+    <td>${r.prozent}%</td>
+  </tr>`).join('');
+}
+
+function escHtml(s) {
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+// ========== CSV export ==========
+function exportCSV() {
+  const rows = filteredResults;
+  if (rows.length === 0) {
+    showMsg('Keine Daten zum Exportieren.','error');
+    return;
+  }
+  let csv = 'Name;Kurs;Datum;Punkte;Prozent\n';
+  rows.forEach(r => {
+    csv += `"${r.name}";"${r.kurs}";"${r.datum}";${r.punktzahl};${r.prozent}\n`;
+  });
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  const datum = new Date().toISOString().slice(0,10);
+  const kursLabel = document.getElementById('filterKurs').value || 'alle';
+  link.download = `ergebnisse_${kursLabel}_${datum}.csv`;
+  link.click();
+  URL.revokeObjectURL(link.href);
+  showMsg('CSV exportiert.','success');
+}
+
+// ========== PDF export ==========
+function exportPDF() {
+  const rows = filteredResults;
+  if (rows.length === 0) {
+    showMsg('Keine Daten zum Exportieren.','error');
+    return;
+  }
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
+
+  doc.setFontSize(18);
+  doc.setTextColor(49,27,146);
+  doc.text('Ergebnisse – Selbsttest Wahrscheinlichkeiten', 14, 20);
+
+  doc.setFontSize(11);
+  doc.setTextColor(100);
+  const kursFilter = document.getElementById('filterKurs').value;
+  doc.text(`Kurs: ${kursFilter || 'Alle'}  |  Eintr&auml;ge: ${rows.length}  |  Exportiert: ${new Date().toLocaleDateString('de-DE')}`, 14, 28);
+
+  const tableData = rows.map(r => [r.name, r.kurs, r.datum, String(r.punktzahl), r.prozent + '%']);
+
+  doc.autoTable({
+    startY: 34,
+    head: [['Name','Kurs','Datum','Punkte','Prozent']],
+    body: tableData,
+    theme: 'grid',
+    headStyles: { fillColor:[124,77,255], textColor:[255,255,255], fontStyle:'bold', fontSize:10 },
+    bodyStyles: { fontSize:9 },
+    alternateRowStyles: { fillColor:[245,245,245] },
+    margin: { top: 34 }
+  });
+
+  const datum = new Date().toISOString().slice(0,10);
+  const kursLabel = document.getElementById('filterKurs').value || 'alle';
+  doc.save(`ergebnisse_${kursLabel}_${datum}.pdf`);
+  showMsg('PDF exportiert.','success');
+}
+
+// ========== Alle l&ouml;schen ==========
+async function confirmDeleteAll() {
+  if (!confirm('Wirklich ALLE Ergebnisse löschen? Diese Aktion kann nicht rückgängig gemacht werden!')) return;
+
+  const msg = document.getElementById('msgBox');
+  msg.className = 'msg';
+  msg.style.display = 'none';
+
+  try {
+    const snapshot = await dbFire.collection("ergebnisse").get();
+    const deletePromises = [];
+    snapshot.forEach(doc => deletePromises.push(doc.ref.delete()));
+    await Promise.all(deletePromises);
+    allResults = [];
+    applyFilter();
+    showMsg('Alle '+deletePromises.length+' Einträge wurden gelöscht.','success');
+    document.getElementById('loadInfo').textContent = 'Keine Einträge.';
+  } catch(err) {
+    showMsg('Fehler beim Löschen: ' + err.message,'error');
+  }
+}
+
+// ========== Aktualisieren ==========
+function refreshData() {
+  loadData();
+}
+
+// ========== Hilfsfunktionen ==========
+let msgTimer = null;
+function showMsg(text, type) {
+  const m = document.getElementById('msgBox');
+  m.innerHTML = text;
+  m.className = 'msg ' + type;
+  m.style.display = 'block';
+  if (msgTimer) clearTimeout(msgTimer);
+  msgTimer = setTimeout(() => { m.style.display = 'none'; }, 5000);
+}
+
+// Allow Enter on password field
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('password').focus();
+});
+</script>
+</body>
+</html>
