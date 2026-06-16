@@ -89,7 +89,7 @@ h1{text-align:center;color:#311b92;font-size:28px;margin-bottom:4px}
 <div class="nav-top"><a href="index.html">&#x2190; Startseite</a></div>
 <div class="container">
 <h1>&#x1F3B2; Selbsttest Wahrscheinlichkeiten</h1>
-<p class="subtitle">Klasse 7 &middot; Absolute &amp; relative H&auml;ufigkeit &middot; Laplace &middot; Baumdiagramme</p>
+<p class="subtitle">Klasse 7 &middot; Br&uuml;che/Dezimalzahlen/Prozent &middot; Laplace &middot; Baumdiagramme &middot; Gewinnwahrscheinlichkeiten</p>
 
 <div id="msgBox" class="msg"></div>
 
@@ -161,138 +161,134 @@ const dbFire = firebase.firestore();
 // ========== Fragenkatalog ==========
 const QUESTIONS = [
   {
-    id:1, type:"multiple-choice", points:1,
-    question:"Was gibt die absolute H&auml;ufigkeit an?",
-    options:[
-      "Wie oft ein Ereignis tats&auml;chlich eingetreten ist",
-      "Den Anteil eines Ereignisses an der Gesamtzahl",
-      "Den Erwartungswert eines Experiments"
-    ],
-    correct:0,
-    explanation:"Die absolute H&auml;ufigkeit z&auml;hlt, wie oft ein bestimmtes Ereignis in einer Versuchsreihe tats&auml;chlich aufgetreten ist."
+    id:1, type:"dropdown", points:1,
+    question:"Der Bruch m('\\frac{3}{20}') entspricht ______ %.",
+    options:["3","15","20","30"],
+    correct:1,
+    explanation:"m('\\frac{3}{20} = \\frac{15}{100} = 15\\%')."
   },
   {
-    id:2, type:"true-false", points:1,
-    question:"Die relative H&auml;ufigkeit wird berechnet als m('\\frac{\\text{absolute H&auml;ufigkeit}}{\\text{Gesamtanzahl}}').",
+    id:2, type:"multiple-choice", points:1,
+    question:"40 % als Dezimalzahl geschrieben ist:",
+    options:["0,04","0,4","4,0","40,0"],
+    correct:1,
+    explanation:"40 % = m('\\frac{40}{100}') = 0,4."
+  },
+  {
+    id:3, type:"true-false", points:1,
+    question:"Es gilt: m('\\frac{1}{4}') = 0,25 = 25 %.",
     correct:true,
-    explanation:"Die relative H&auml;ufigkeit = absolute H&auml;ufigkeit / Gesamtanzahl der Versuche."
-  },
-  {
-    id:3, type:"dropdown", points:1,
-    question:"In einer Strichliste werden Daten mit ____ markiert. W&auml;hle die richtige Erg&auml;nzung.",
-    options:["Strichen","Zahlen","Buchstaben","Symbolen"],
-    correct:0,
-    explanation:"In einer Strichliste werden Eintr&auml;ge mit Strichen gez&auml;hlt (meist in F&uuml;nferbl&ouml;cken)."
+    explanation:"m('\\frac{1}{4} = \\frac{25}{100}') = 0,25 = 25 %."
   },
   {
     id:4, type:"multiple-choice", points:1,
-    question:"Ein Laplace-Experiment liegt vor, wenn&hellip;",
+    question:"Ein Laplace-Zufallsger&auml;t liegt vor, wenn&hellip;",
     options:[
       "&hellip;alle Ergebnisse gleich wahrscheinlich sind.",
       "&hellip;die Wahrscheinlichkeiten unterschiedlich sind.",
-      "&hellip;das Experiment nur einmal durchgef&uuml;hrt wird."
+      "&hellip;das Ger&auml;t nur einmal benutzt wird.",
+      "&hellip;es mindestens 6 Ergebnisse gibt."
     ],
     correct:0,
-    explanation:"Laplace-Experimente zeichnen sich durch gleich wahrscheinliche Ergebnisse aus, z.&thinsp;B. ein fairer W&uuml;rfel."
+    explanation:"Bei Laplace-Zufallsger&auml;ten haben alle m&ouml;glichen Ergebnisse die gleiche Wahrscheinlichkeit."
   },
   {
     id:5, type:"multi-select", points:1,
-    question:"Welche der folgenden Situationen sind Laplace-Experimente? (Mehrere Antworten m&ouml;glich.)",
+    question:"Welche der folgenden sind Laplace-Zufallsger&auml;te? (Mehrere Antworten m&ouml;glich.)",
     options:[
-      "Werfen eines fairen sechsseitigen W&uuml;rfels",
-      "Werfen einer fairen M&uuml;nze",
-      "Ziehen einer Kugel aus einer Urne mit 5 gleichen Kugeln (1 rot, 2 blau, 2 gr&uuml;n)",
-      "Raten einer Zahl zwischen 1 und 10 ohne gleiche Chancen"
+      "Ein fairer sechsseitiger W&uuml;rfel",
+      "Eine gezinkte M&uuml;nze (Kopf f&auml;llt h&auml;ufiger)",
+      "Ein Gl&uuml;cksrad mit 8 gleich gro&szlig;en Feldern",
+      "Das Ziehen einer Kugel aus einer Urne mit 5 gleichen Kugeln"
     ],
-    correct:[0,1,2],
-    explanation:"Ein fairer W&uuml;rfel, eine faire M&uuml;nze und das Ziehen aus einer Urne mit gleichen Kugeln sind Laplace-Experimente, da alle Ergebnisse gleich wahrscheinlich sind."
+    correct:[0,2,3],
+    explanation:"Ein fairer W&uuml;rfel, ein Gl&uuml;cksrad mit gleichen Feldern und das Ziehen aus einer Urne mit gleichen Kugeln sind Laplace-Zufallsger&auml;te, da alle Ergebnisse gleich wahrscheinlich sind."
   },
   {
-    id:6, type:"ordering", points:1,
-    question:"Bringe die Schritte zur Berechnung einer Wahrscheinlichkeit mithilfe eines Baumdiagramms in die richtige Reihenfolge.",
-    options:[
-      "Ergebnis ablesen und interpretieren",
-      "Baumdiagramm mit allen &Auml;sten zeichnen",
-      "Pfadregel anwenden (Wahrscheinlichkeiten multiplizieren)",
-      "Experiment analysieren und Daten sammeln"
-    ],
-    correctOrder:[3,1,2,0],
-    explanation:"1. Experiment analysieren, 2. Baumdiagramm zeichnen, 3. Pfadregel anwenden, 4. Ergebnis interpretieren."
+    id:6, type:"true-false", points:1,
+    question:"Ein Kreisel hat 8 gleich gro&szlig;e Felder (nummeriert 1 bis 8). Die Wahrscheinlichkeit, eine 3 zu drehen, betr&auml;gt m('\\frac{1}{8}').",
+    correct:true,
+    explanation:"Da alle 8 Felder gleich gro&szlig; sind, ist jedes Ergebnis gleich wahrscheinlich: P(3) = m('\\frac{1}{8}')."
   },
   {
-    id:7, type:"true-false", points:1,
-    question:"Beim zweistufigen Ziehen <strong>ohne Zur&uuml;cklegen</strong> &auml;ndern sich die Wahrscheinlichkeiten im zweiten Durchgang.",
+    id:7, type:"dropdown", points:1,
+    question:"Ein Kreisel hat 8 gleich gro&szlig;e Felder (1 bis 8). Die Wahrscheinlichkeit, eine <strong>1 oder eine 5</strong> zu drehen, betr&auml;gt ______ / 8.",
+    options:["1","2","3","4"],
+    correct:1,
+    explanation:"Es gibt zwei g&uuml;nstige Ergebnisse (1 und 5) von 8 m&ouml;glichen: P = m('\\frac{2}{8}')."
+  },
+  {
+    id:8, type:"multiple-choice", points:1,
+    question:"Beim Elfmeterschie&szlig;en wurden 8 von 25 Elfmetern verwandelt. Die relative H&auml;ufigkeit in Prozent betr&auml;gt:",
+    options:["8 %","25 %","32 %","40 %"],
+    correct:2,
+    explanation:"m('\\frac{8}{25} = \\frac{32}{100}') = 32 %."
+  },
+  {
+    id:9, type:"ordering", points:1,
+    question:"Sortiere die folgenden Darstellungen der gleichen Wahrscheinlichkeit in die Reihenfolge: <strong>Bruch &rarr; Hundertstelbruch &rarr; Dezimalzahl &rarr; Prozentzahl</strong>",
+    options:[
+      "m('\\frac{3}{4}')",
+      "m('\\frac{75}{100}')",
+      "0,75",
+      "75 %"
+    ],
+    correctOrder:[0,1,2,3],
+    explanation:"m('\\frac{3}{4} = \\frac{75}{100}') = 0,75 = 75 %. Dies ist die typische Umwandlungskette."
+  },
+  {
+    id:10, type:"multiple-choice", points:1,
+    question:"In einer Urne sind 3 rote und 2 blaue Kugeln. Es wird zweimal <strong>ohne Zur&uuml;cklegen</strong> gezogen. Wie gro&szlig; ist die Wahrscheinlichkeit, zwei rote Kugeln zu ziehen?",
+    options:[
+      "m('\\frac{3}{5}')",
+      "m('\\frac{6}{25}')",
+      "m('\\frac{6}{20}')",
+      "m('\\frac{9}{25}')"
+    ],
+    correct:2,
+    explanation:"Nach der Pfadregel: m('\\frac{3}{5} \\times \\frac{2}{4} = \\frac{6}{20}')."
+  },
+  {
+    id:11, type:"true-false", points:1,
+    question:"Beim zweistufigen Ziehen <strong>ohne Zur&uuml;cklegen</strong> aus einer Urne &auml;ndern sich die Wahrscheinlichkeiten im zweiten Durchgang.",
     correct:true,
     explanation:"Ohne Zur&uuml;cklegen ver&auml;ndert sich die Zusammensetzung der Urne, daher &auml;ndern sich die Wahrscheinlichkeiten."
   },
   {
-    id:8, type:"dropdown", points:1,
-    question:"In einer Urne sind 4 rote und 6 blaue Kugeln. Die Wahrscheinlichkeit, im ersten Zug eine rote Kugel zu ziehen, betr&auml;gt m('\\frac{4}{10}') = ______ (als Dezimalbruch).",
-    options:["0,4","0,6","0,5","0,25"],
-    correct:0,
-    explanation:"4/10 = 0,4. Es sind 4 rote von insgesamt 10 Kugeln."
-  },
-  {
-    id:9, type:"multiple-choice", points:1,
-    question:"Wie viele verschiedene Pfade hat ein zweistufiges Baumdiagramm, wenn es auf der ersten Stufe 2 &Auml;ste und auf der zweiten Stufe 3 &Auml;ste gibt?",
-    options:["5","6","8","9"],
-    correct:1,
-    explanation:"Anzahl Pfade = 2 &times; 3 = 6."
-  },
-  {
-    id:10, type:"multi-select", points:1,
-    question:"Welche Aussagen zur relativen H&auml;ufigkeit sind korrekt? (Mehrere Antworten m&ouml;glich.)",
-    options:[
-      "Sie liegt immer zwischen 0 und 1.",
-      "Sie kann gr&ouml;&szlig;er als 1 sein.",
-      "Die Summe aller relativen H&auml;ufigkeiten ist 1.",
-      "Sie wird als Anteil der Gesamtzahl angegeben."
-    ],
-    correct:[0,2,3],
-    explanation:"Die relative H&auml;ufigkeit liegt immer zwischen 0 und 1, die Summe aller relativen H&auml;ufigkeiten ist 1, und sie gibt den Anteil an der Gesamtzahl an."
-  },
-  {
-    id:11, type:"true-false", points:1,
-    question:"Die Wahrscheinlichkeit, bei einem fairen W&uuml;rfelwurf eine gerade Zahl zu w&uuml;rfeln, betr&auml;gt m('\\frac{1}{2}').",
-    correct:true,
-    explanation:"Es gibt 3 gerade Zahlen (2,4,6) von 6 m&ouml;glichen Ergebnissen: m('\\frac{3}{6} = \\frac{1}{2}')."
-  },
-  {
     id:12, type:"dropdown", points:1,
-    question:"Die ____-Regel besagt: Die Wahrscheinlichkeit eines Pfades im Baumdiagramm ist das Produkt der Einzelwahrscheinlichkeiten entlang des Pfades.",
-    options:["Produkt-","Summen-","Pfad-","Additions-"],
-    correct:2,
-    explanation:"Die Pfadregel (Multiplikationsregel) besagt, dass die Wahrscheinlichkeit eines Pfades das Produkt der Einzelwahrscheinlichkeiten ist."
+    question:"Die ____-Regel besagt: Die Wahrscheinlichkeit eines Ereignisses ist die Summe der Wahrscheinlichkeiten aller Pfade, die zu diesem Ereignis f&uuml;hren.",
+    options:["Pfad-","Summen-","Produkt-","Baum-"],
+    correct:1,
+    explanation:"Die Summenregel (Additionsregel) addiert die Wahrscheinlichkeiten mehrerer Pfade, die zum gleichen Ereignis geh&ouml;ren."
   },
   {
-    id:13, type:"ordering", points:1,
-    question:"Sortiere die folgenden Wahrscheinlichkeiten von der <strong>kleinsten</strong> zur <strong>gr&ouml;&szlig;ten</strong>:",
+    id:13, type:"multiple-choice", points:1,
+    question:"Du w&uuml;rfelst mit einem fairen W&uuml;rfel. Du gewinnst bei einer <strong>1 oder einer 6</strong>. Wie gro&szlig; ist die Gewinnwahrscheinlichkeit?",
     options:[
+      "m('\\frac{1}{6}')",
+      "m('\\frac{1}{3}')",
       "m('\\frac{1}{2}')",
-      "m('\\frac{3}{4}')",
-      "m('\\frac{1}{8}')",
-      "1"
-    ],
-    correctOrder:[2,0,1,3],
-    explanation:"m('\\frac{1}{8}') &lt; m('\\frac{1}{2}') &lt; m('\\frac{3}{4}') &lt; 1."
-  },
-  {
-    id:14, type:"multiple-choice", points:1,
-    question:"Ein fairer W&uuml;rfel wird zweimal geworfen. Wie gro&szlig; ist die Wahrscheinlichkeit, <strong>zweimal eine 6</strong> zu werfen?",
-    options:[
-      "m('\\frac{2}{12}')",
-      "m('\\frac{1}{36}')",
-      "m('\\frac{2}{6}')",
-      "m('\\frac{1}{6}')"
+      "m('\\frac{2}{3}')"
     ],
     correct:1,
-    explanation:"Nach der Pfadregel: m('\\frac{1}{6} \\times \\frac{1}{6} = \\frac{1}{36}')."
+    explanation:"P(1 oder 6) = m('\\frac{2}{6} = \\frac{1}{3}')."
   },
   {
-    id:15, type:"true-false", points:1,
-    question:"Beim Ziehen <strong>mit Zur&uuml;cklegen</strong> bleiben die Wahrscheinlichkeiten in jeder Stufe eines mehrstufigen Zufallsexperiments gleich.",
-    correct:true,
-    explanation:"Durch das Zur&uuml;cklegen wird die Ausgangssituation vor jedem Zug wiederhergestellt, daher bleiben die Wahrscheinlichkeiten konstant."
+    id:14, type:"true-false", points:1,
+    question:"Ein W&uuml;rfel, bei dem die 6 durch ein eingebautes Gewicht h&auml;ufiger f&auml;llt als die anderen Zahlen, ist ein Laplace-Zufallsger&auml;t.",
+    correct:false,
+    explanation:"Die Ergebnisse sind nicht gleich wahrscheinlich, daher ist es kein Laplace-Zufallsger&auml;t."
+  },
+  {
+    id:15, type:"multiple-choice", points:1,
+    question:"Du hast zwei W&uuml;rfel: <strong>W&uuml;rfel A</strong> ist ein normaler fairer W&uuml;rfel. Bei <strong>W&uuml;rfel B</strong> kommt die 1 doppelt so h&auml;ufig vor wie jede andere Zahl. Du gewinnst, wenn du eine <strong>1</strong> w&uuml;rfelst. Welche Aussage stimmt?",
+    options:[
+      "W&uuml;rfel A hat die gr&ouml;&szlig;ere Gewinnwahrscheinlichkeit",
+      "W&uuml;rfel B hat die gr&ouml;&szlig;ere Gewinnwahrscheinlichkeit",
+      "Beide haben die gleiche Gewinnwahrscheinlichkeit"
+    ],
+    correct:1,
+    explanation:"W&uuml;rfel A: P(1) = m('\\frac{1}{6} \\approx 16,7\\%'). Bei W&uuml;rfel B ist die 1 doppelt so wahrscheinlich (P(1) = m('\\frac{2}{7} \\approx 28,6\\%')). Also ist W&uuml;rfel B besser."
   }
 ];
 
